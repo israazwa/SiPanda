@@ -6,7 +6,42 @@
 @include('admin.template.aside')
 
 {{-- Konten Utama --}}
-<main class="md:ml-64 px-6 py-8 bg-gray-800 min-h-screen text-white transition-all duration-300">
+<main class="md:ml-64 px-6 py-8 bg-gray-800 min-h-screen text-white transition-all duration-300 mb-15">
+  @if($errors->any())
+    <div x-data="{ show: true, countdown: 5 }"
+         x-init="
+            let timer = setInterval(() => {
+                if (countdown > 0) {
+                    countdown--;
+                } else {
+                    show = false;
+                    clearInterval(timer);
+                }
+            }, 1000);
+         "
+         x-show="show"
+         x-transition
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+    >
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 text-red-800">
+            <h2 class="text-lg font-bold mb-2 text-red-600">Ada kesalahan:</h2>
+            <ul class="list-disc list-inside text-sm mb-4">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <p class="text-xs text-gray-500 mb-4">
+                Modal ini akan menutup otomatis dalam <span x-text="countdown"></span> detik.
+            </p>
+            <div class="text-right">
+                <button @click="show = false"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm">
+                    Tutup sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+@endif
   <h1 class="text-3xl font-bold text-white mb-8">Tambah Produk</h1>
 
   <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6 bg-gray-900 p-6 rounded-lg shadow-lg">

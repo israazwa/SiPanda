@@ -13,20 +13,26 @@ class ControllerCRUDProduk extends Controller
 {
     public function index(Request $request)
     {
+
         try {
             $products = produk::with('category')
                 ->when($request->search, function ($query) use ($request) {
                     $query->where('name', 'like', '%' . $request->search . '%');
                 })
                 ->latest()
-                ->paginate(2);
+                ->paginate(5);
 
-            return view('admin.main.produk', compact('products'));
+            $hitungproduk = produk::all();
+            $data = [
+                'products' => $products,
+                'hitungproduk' => $hitungproduk,
+            ];
+            return view('admin.main.produk', $data);
 
         } catch (\Exception $e) {
             Log::error('Gagal mengambil produk: ' . $e->getMessage());
             return view('admin.main.produk', [
-                'products' => collect(), // kosongkan data
+                'products' => collect(),
                 'error' => 'Terjadi kesalahan saat memuat produk. Silakan coba lagi nanti.'
             ]);
         }
@@ -47,7 +53,7 @@ class ControllerCRUDProduk extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
@@ -63,10 +69,10 @@ class ControllerCRUDProduk extends Controller
             }
 
             $validated['is_promo'] = true;
-            $validated['price'] = $diskon; // ⬅️ Simpan selisihnya sebagai harga
+            $validated['price'] = $diskon;
         } else {
             $validated['is_promo'] = false;
-            unset($validated['promo_price']); // opsional, kalau tidak ingin disimpan
+            unset($validated['promo_price']);
         }
 
         // Simpan gambar jika ada
@@ -90,7 +96,7 @@ class ControllerCRUDProduk extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',

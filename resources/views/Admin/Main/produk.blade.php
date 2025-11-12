@@ -1,6 +1,6 @@
 @include('admin.template.header')
 @include('admin.template.aside')
-<main class="flex-1 ml-0 md:ml-64 mt-15 py-6 px-4 md:px-8 bg-gray-800 min-h-screen text-white">
+<main class="flex-1 ml-0 md:ml-64 mt-15 py-6 px-4 md:px-8 bg-gray-800 min-h-screen text-white print:hidden">
     @include('admin.template.dashboardwarn')
 
     @if (isset($error))
@@ -17,10 +17,18 @@
                 <input type="text" name="search" value="{{ request('search') }}"
                     placeholder="Cari produk..."
                     class="px-4 py-2 border rounded text-white w-full sm:w-auto" />
+
                 <button type="submit"
                     class="hover:cursor-pointer bg-amber-600 hover:bg-orange-500 text-white px-4 py-2 rounded-md text-sm font-semibold">
                     Cari
                 </button>
+
+                @if(request('search'))
+                    <a href="{{ route('admin.products.index') }}"
+                        class="hover:cursor-pointer bg-blue-500/50 hover:bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-semibold text-center">
+                        Reset
+                    </a>
+                @endif
             </form>
 
             <a href="{{ route('admin.products.create') }}"
@@ -34,6 +42,7 @@
         <table class="min-w-full bg-gray-800">
             <thead class="bg-gray-700 text-left text-sm font-semibold text-gray-200">
                 <tr>
+                    <th class="px-4 py-3 whitespace-nowrap w-10">No</th>
                     <th class="px-4 py-3 whitespace-nowrap">Nama</th>
                     <th class="px-4 py-3 whitespace-nowrap">Kategori</th>
                     <th class="px-4 py-3 whitespace-nowrap">Harga</th>
@@ -44,15 +53,24 @@
             </thead>
             <tbody class="text-sm text-gray-100 divide-y divide-gray-700">
                 @forelse($products as $product)
-                    <tr class="hover:bg-gray-700 transition">
-                        <td class="px-4 py-3">{{ $product->name }}</td>
-                        <td class="px-4 py-3">{{ $product->category->name ?? '-' }}</td>
+                    <tr @class([
+                            'hover:bg-gray-700 transition',
+                            'bg-red-500/60 hover:bg-red-500/40' => $product->stock == 0,
+                            'bg-yellow-300/60 hover:bg-yellow-300/40' => $product->stock < 6 && $product->stock > 0,
+                    ])>
+                       <td class="px-4 py-3">
+                            {{ ($products->currentPage() - 1) * $products->perPage() + $loop->iteration }}
+                        </td>
+                       <td class="px-4 py-3">
+                            {{ $product->name }}
+                        </td>
+                        <td class="px-4 py-3">{{ $product->category->name ?? 'Kategori belum diisi' }}</td>
                         <td class="px-4 py-3">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
                         <td class="px-4 py-3">
                             @if ($product->is_promo && $product->promo_price)
-                                <span class="text-orange-400 font-bold">Rp {{ number_format($product->promo_price, 0, ',', '.') }}</span>
+                                <span class="text-orange-700 font-bold">Rp {{ number_format($product->promo_price, 0, ',', '.') }}</span>
                             @else
-                                <p class="text-xs text-green-500">TIDAK ADA DISKON</p>
+                                <p class="text-xs text-green-500 font-semibold">TIDAK ADA DISKON</p>
                             @endif
                         </td>
                         <td class="px-4 py-3">{{ $product->stock }}</td>
@@ -111,6 +129,23 @@
     <div class="mt-6">
         {{ $products->appends(['search' => request('search')])->links() }}
     </div>
+
+    {{-- Tombol Cetak --}}
+<div class="mb-4 print:hidden">
+    <button onclick="window.print()"
+        class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md text-sm font-semibold hover:cursor-pointer">
+         Cetak Semua Produk
+    </button>
+</div>
 </main>
+{{-- Tabel untuk Print (semua data, tanpa pagination) --}}
+<div class="hidden print:block">
+    @php
+        $allProducts = \App\Models\produk::with('category')->get();
+    @endphp
+
+    @include('Admin.Template.Print.TableProduk', ['products' => $allProducts])
+</div>
+
 
 @include('admin.template.footer')

@@ -8,7 +8,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   </head>
   <body class="bg-gray-100">
-    <header x-data="{ open: false }" class="bg-gray-900 text-white shadow-md fixed top-0 left-0 w-full z-30">
+    <header x-data="{ open: false }" class="bg-gray-900 text-white shadow-md fixed top-0 left-0 w-full z-30 print:hidden">
       <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <!-- Logo & Nama -->
         <div class="flex items-center space-x-3">
