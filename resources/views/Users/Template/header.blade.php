@@ -47,7 +47,7 @@
       <nav class="hidden lg:flex flex-grow items-center gap-8 justify-center">
         <!-- Theme Toggle Button -->
         <a href="/home" class="text-lg font-medium text-orange-700 hover:text-orange-700 transition-colors {{ request()->routeIs('home') ? 'text-orange-700 font-bold border-b-2 border-orange-700' : 'text-white hover:text-orange-600' }}">Home</a>
-        <a href="/" class="text-lg font-medium text-orange-700 hover:text-orange-700 transition-colors {{ request()->routeIs('/') ? 'text-orange-700 font-bold border-b-2 border-orange-700' : 'text-white hover:text-orange-600' }}">Catalog</a>
+        <a href="/catalog" class="text-lg font-medium text-orange-700 hover:text-orange-700 transition-colors {{ request()->routeIs('/catalog') ? 'text-orange-700 font-bold border-b-2 border-orange-700' : 'text-white hover:text-orange-600' }}">Catalog</a>
         <a href="/" class="text-lg font-medium text-orange-700 hover:text-orange-700 transition-colors {{ request()->routeIs('/') ? 'text-orange-700 font-bold border-b-2 border-orange-700' : 'text-white hover:text-orange-600' }}">About Us</a>
         <a href="/" class="text-lg font-medium text-orange-700 hover:text-orange-700 transition-colors {{ request()->routeIs('/') ? 'text-orange-700 font-bold border-b-2 border-orange-700' : 'text-white hover:text-orange-600' }}">Card</a>
       </nav>
@@ -82,7 +82,7 @@
     </div>
     <nav class="flex flex-col items-end p-4 space-y-4">
       <a href="/home" class="text-primary dark:text-white text-lg hover:text-white transition-colors">Home</a>
-      <a href="/pretest" class="text-primary dark:text-white text-lg hover:text-white transition-colors">Pretest</a>
+      <a href="/catalog" class="text-primary dark:text-white text-lg hover:text-white transition-colors">Catalog</a>
       <a href="/otak3d" class="text-primary dark:text-white text-lg hover:text-white transition-colors">3D Model</a>
       <a href="/posttest" class="text-primary dark:text-white text-lg hover:text-white transition-colors">Post-test</a>
       <a href="#" data-modal-target="passwordModal"
@@ -99,48 +99,7 @@
   </div>
 </header>
 
-<script>
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const toggleButton = document.querySelector("button[aria-label='Toggle mobile menu']");
-    const mobileMenu = document.getElementById("mobileMenu");
-    const closeButton = document.getElementById("closeMenu");
-    const overlay = document.getElementById("overlay");
-
-    function openMenu() {
-      mobileMenu.classList.remove("translate-x-full");
-      mobileMenu.classList.add("translate-x-0");
-      overlay.classList.remove("hidden");
-    }
-
-    function closeMenu() {
-      mobileMenu.classList.remove("translate-x-0");
-      mobileMenu.classList.add("translate-x-full");
-      overlay.classList.add("hidden");
-    }
-
-    toggleButton.addEventListener("click", openMenu);
-    closeButton.addEventListener("click", closeMenu);
-    overlay.addEventListener("click", closeMenu);
-  });
-</script>
-<script>
-  let lastScrollTop = 0;
-  const header = document.querySelector('header');
-
-  window.addEventListener('scroll', function () {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-
-    if (currentScroll > lastScrollTop) {
-      header.classList.add('translate-y-[-100%]');
-    } else {
-      header.classList.remove('translate-y-[-100%]');
-    }
-
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; 
-  });
-  
-</script>
+@vite('resources/js/headerUsers.js')
 
 @if (session('success'))
   <div id="flashSuccess" class="fixed top-[40vh] left-1/2 transform -translate-x-1/2 z-[9999] w-[90%] max-w-xl bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg">
